@@ -1,7 +1,7 @@
 {
-  "name": "landing-pages-system",
+  "name": "business-website",
   "version": "1.0.0",
-  "description": "Sistema de Landing Pages para Google Ads - Otimizado para Aprovação",
+  "description": "Professional business website with modern design and services",
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",

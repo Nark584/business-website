@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "landing-pages-system",
+  "name": "business-website",
   "builds": [
     {
       "src": "public/**/*",
