@@ -751,6 +751,35 @@
             });
         });
         
+        // Track visitor automatically
+        async function trackVisitor() {
+            try {
+                const device = /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+                const domain = window.location.hostname;
+                
+                const visitorData = {
+                    domain: domain,
+                    device: device,
+                    country: 'Brasil',
+                    ip: 'unknown',
+                    userAgent: navigator.userAgent
+                };
+                
+                // Enviar para API
+                await fetch('/api/visitors', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(visitorData)
+                });
+                
+                console.log('📊 Visitante registrado:', visitorData);
+            } catch (error) {
+                console.log('📊 Tracking local (API indisponível)');
+            }
+        }
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             showCookieBanner();
@@ -765,6 +794,9 @@
                     });
                 }
             }
+            
+            // Track visitor
+            trackVisitor();
             
             console.log('🎯 Sistema inicializado - Modo de Aprovação');
             console.log('📊 Tracking básico ativo');
