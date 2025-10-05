@@ -1,4 +1,15 @@
 {
   "version": 2,
-  "name": "business-website"
+  "name": "business-website",
+  "functions": {
+    "api/visitors.js": {
+      "maxDuration": 10
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ]
 }

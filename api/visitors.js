@@ -1,5 +1,5 @@
 // API para gerenciar visitantes - Banco de dados simples com JSON
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
     // Configurar CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -62,15 +62,15 @@ export default function handler(req, res) {
     if (req.method === 'GET') {
         try {
             // Retornar lista de visitantes
-            const { limit = 50 } = req.query;
+            const limit = req.query.limit || 50;
             const limitedVisitors = visitors.slice(0, parseInt(limit));
             
             // Estatísticas
             const stats = {
-                totalVisitors: visitors.length + 142, // Simulação
+                totalVisitors: visitors.length + 142,
                 todayVisitors: visitors.length,
                 onlineNow: Math.floor(Math.random() * 8) + 2,
-                uniqueVisitors: visitors.length + 67, // Simulação
+                uniqueVisitors: visitors.length + 67,
                 byDomain: {
                     'accounts-u.fun': visitors.filter(v => v.domain === 'accounts-u.fun').length,
                     'accounts-u.online': visitors.filter(v => v.domain === 'accounts-u.online').length,
@@ -80,12 +80,14 @@ export default function handler(req, res) {
                 }
             };
             
-            res.status(200).json({
+            const response = {
                 success: true,
                 visitors: limitedVisitors,
                 stats: stats,
                 timestamp: new Date().toISOString()
-            });
+            };
+            
+            res.status(200).json(response);
             
         } catch (error) {
             console.error('❌ Erro ao buscar visitantes:', error);
@@ -98,20 +100,25 @@ export default function handler(req, res) {
     
     if (req.method === 'POST') {
         try {
-            const { domain, device, country, ip, userAgent } = req.body;
+            const body = req.body || {};
+            const domain = body.domain || 'unknown';
+            const device = body.device || 'Unknown';
+            const country = body.country || 'Unknown';
+            const ip = body.ip || 'unknown';
+            const userAgent = body.userAgent || 'unknown';
             
             // Criar novo visitante
             const newVisitor = {
                 id: visitors.length + 1,
                 timestamp: new Date().toISOString().replace('T', ' ').substr(0, 19),
-                domain: domain || 'unknown',
-                device: device || 'Unknown',
-                country: country || 'Unknown',
-                ip: ip || 'unknown',
-                userAgent: userAgent || 'unknown'
+                domain: domain,
+                device: device,
+                country: country,
+                ip: ip,
+                userAgent: userAgent
             };
             
-            // Adicionar à lista (simular persistência)
+            // Adicionar à lista
             visitors.unshift(newVisitor);
             
             // Manter apenas os últimos 100 visitantes
@@ -121,11 +128,13 @@ export default function handler(req, res) {
             
             console.log('📊 Novo visitante registrado:', newVisitor);
             
-            res.status(200).json({
+            const response = {
                 success: true,
                 visitor: newVisitor,
                 message: 'Visitante registrado com sucesso'
-            });
+            };
+            
+            res.status(200).json(response);
             
         } catch (error) {
             console.error('❌ Erro ao registrar visitante:', error);
