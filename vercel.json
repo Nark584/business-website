@@ -1,6 +1,8 @@
 {
   "version": 2,
-  "name": "business-website",
+  "name": "japanese-life-guide",
+  "buildCommand": "echo 'Static site - no build required'",
+  "outputDirectory": ".",
   "functions": {
     "api/visitors.js": {
       "maxDuration": 10
@@ -10,6 +12,10 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }
