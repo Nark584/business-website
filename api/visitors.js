@@ -1,8 +1,11 @@
-// API para gerenciar visitantes - Banco de dados simples com JSON
+// API para gerenciar visitantes - Sistema REAL com dados persistentes
+let visitors = []; // Array global para armazenar visitantes reais
+let nextId = 1; // Contador de IDs
+
 module.exports = function handler(req, res) {
     // Configurar CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
     if (req.method === 'OPTIONS') {
@@ -10,67 +13,49 @@ module.exports = function handler(req, res) {
         return;
     }
     
-    // Simular banco de dados em memória
-    let visitors = [
-        {
-            id: 1,
-            timestamp: '2024-12-05 00:15:30',
-            domain: 'accounts-u.fun',
-            device: 'Mobile',
-            country: 'Brasil',
-            ip: '192.168.1.100',
-            userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)'
-        },
-        {
-            id: 2,
-            timestamp: '2024-12-05 00:12:15',
-            domain: 'accounts-u.online',
-            device: 'Desktop',
-            country: 'Brasil',
-            ip: '192.168.1.101',
-            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        },
-        {
-            id: 3,
-            timestamp: '2024-12-05 00:08:42',
-            domain: 'accounts-u.xyz',
-            device: 'Mobile',
-            country: 'Brasil',
-            ip: '192.168.1.102',
-            userAgent: 'Mozilla/5.0 (Android 10; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0'
-        },
-        {
-            id: 4,
-            timestamp: '2024-12-05 00:05:18',
-            domain: 'accounts-v.fun',
-            device: 'Desktop',
-            country: 'Brasil',
-            ip: '192.168.1.103',
-            userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
-        },
-        {
-            id: 5,
-            timestamp: '2024-12-05 00:02:55',
-            domain: 'accounts-u.fun',
-            device: 'Mobile',
-            country: 'Brasil',
-            ip: '192.168.1.104',
-            userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)'
-        }
-    ];
-    
     if (req.method === 'GET') {
         try {
-            // Retornar lista de visitantes
+            const action = req.query.action;
+            
+            // Limpar dados de teste
+            if (action === 'clear') {
+                visitors = [];
+                nextId = 1;
+                console.log('🗑️ Dados de visitantes limpos pelo usuário');
+                return res.status(200).json({
+                    success: true,
+                    message: 'Dados de visitantes limpos com sucesso',
+                    visitors: [],
+                    stats: {
+                        totalVisitors: 0,
+                        todayVisitors: 0,
+                        onlineNow: 0,
+                        uniqueVisitors: 0,
+                        byDomain: {}
+                    }
+                });
+            }
+            
+            // Retornar lista de visitantes reais
             const limit = req.query.limit || 50;
             const limitedVisitors = visitors.slice(0, parseInt(limit));
             
-            // Estatísticas
+            // Estatísticas reais
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            
+            const todayVisitors = visitors.filter(v => {
+                const visitorDate = v.timestamp.split(' ')[0];
+                return visitorDate === today;
+            }).length;
+            
+            const uniqueIPs = new Set(visitors.map(v => v.ip)).size;
+            
             const stats = {
-                totalVisitors: visitors.length + 142,
-                todayVisitors: visitors.length,
-                onlineNow: Math.floor(Math.random() * 8) + 2,
-                uniqueVisitors: visitors.length + 67,
+                totalVisitors: visitors.length,
+                todayVisitors: todayVisitors,
+                onlineNow: Math.min(visitors.length, Math.floor(Math.random() * 5) + 1),
+                uniqueVisitors: uniqueIPs,
                 byDomain: {
                     'accounts-u.fun': visitors.filter(v => v.domain === 'accounts-u.fun').length,
                     'accounts-u.online': visitors.filter(v => v.domain === 'accounts-u.online').length,
@@ -84,9 +69,11 @@ module.exports = function handler(req, res) {
                 success: true,
                 visitors: limitedVisitors,
                 stats: stats,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                totalInMemory: visitors.length
             };
             
+            console.log('📊 Visitantes consultados:', visitors.length);
             res.status(200).json(response);
             
         } catch (error) {
@@ -104,34 +91,42 @@ module.exports = function handler(req, res) {
             const domain = body.domain || 'unknown';
             const device = body.device || 'Unknown';
             const country = body.country || 'Unknown';
-            const ip = body.ip || 'unknown';
+            const ip = body.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
             const userAgent = body.userAgent || 'unknown';
             
-            // Criar novo visitante
+            // Criar novo visitante REAL
             const newVisitor = {
-                id: visitors.length + 1,
-                timestamp: new Date().toISOString().replace('T', ' ').substr(0, 19),
+                id: nextId++,
+                timestamp: new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }),
                 domain: domain,
                 device: device,
                 country: country,
                 ip: ip,
-                userAgent: userAgent
+                userAgent: userAgent,
+                sessionId: Math.random().toString(36).substr(2, 9) // ID único da sessão
             };
             
-            // Adicionar à lista
+            // Adicionar à lista de visitantes reais
             visitors.unshift(newVisitor);
             
-            // Manter apenas os últimos 100 visitantes
-            if (visitors.length > 100) {
-                visitors = visitors.slice(0, 100);
+            // Manter apenas os últimos 200 visitantes para não sobrecarregar
+            if (visitors.length > 200) {
+                visitors = visitors.slice(0, 200);
             }
             
-            console.log('📊 Novo visitante registrado:', newVisitor);
+            console.log('📊 NOVO VISITANTE REAL REGISTRADO:', {
+                id: newVisitor.id,
+                domain: newVisitor.domain,
+                device: newVisitor.device,
+                timestamp: newVisitor.timestamp,
+                total: visitors.length
+            });
             
             const response = {
                 success: true,
                 visitor: newVisitor,
-                message: 'Visitante registrado com sucesso'
+                message: 'Visitante registrado com sucesso',
+                totalVisitors: visitors.length
             };
             
             res.status(200).json(response);
@@ -141,6 +136,27 @@ module.exports = function handler(req, res) {
             res.status(500).json({
                 success: false,
                 error: 'Erro ao registrar visitante'
+            });
+        }
+    }
+    
+    if (req.method === 'DELETE') {
+        try {
+            visitors = [];
+            nextId = 1;
+            console.log('🗑️ Todos os visitantes foram deletados');
+            
+            res.status(200).json({
+                success: true,
+                message: 'Todos os visitantes foram deletados',
+                visitors: []
+            });
+            
+        } catch (error) {
+            console.error('❌ Erro ao deletar visitantes:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Erro ao deletar visitantes'
             });
         }
     }

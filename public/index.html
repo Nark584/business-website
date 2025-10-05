@@ -769,7 +769,7 @@
             });
         });
         
-        // Track visitor automatically
+        // Track visitor automatically - SISTEMA REAL
         async function trackVisitor() {
             try {
                 const device = /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
@@ -779,12 +779,12 @@
                     domain: domain,
                     device: device,
                     country: 'Brasil',
-                    ip: 'unknown',
+                    ip: 'auto-detect',
                     userAgent: navigator.userAgent
                 };
                 
-                // Enviar para API
-                await fetch('/api/visitors', {
+                // Enviar para API REAL
+                const response = await fetch('/api/visitors', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -792,9 +792,21 @@
                     body: JSON.stringify(visitorData)
                 });
                 
-                console.log('📊 Visitante registrado:', visitorData);
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('📊 VISITANTE REAL REGISTRADO:', {
+                        id: result.visitor.id,
+                        domain: result.visitor.domain,
+                        device: result.visitor.device,
+                        timestamp: result.visitor.timestamp,
+                        total: result.totalVisitors
+                    });
+                } else {
+                    console.log('📊 Erro ao registrar visitante:', result.error);
+                }
             } catch (error) {
-                console.log('📊 Tracking local (API indisponível)');
+                console.log('📊 Erro de conexão com API:', error);
             }
         }
 
