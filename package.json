@@ -1,0 +1,26 @@
+{
+  "name": "business-website",
+  "version": "1.0.0",
+  "description": "Professional business website with modern design and services",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "start": "echo 'Static files served by Vercel'"
+  },
+  "keywords": [
+    "landing-page",
+    "google-ads",
+    "vercel",
+    "marketing",
+    "conversion"
+  ],
+  "author": "Premium Digital Solutions",
+  "license": "MIT",
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}

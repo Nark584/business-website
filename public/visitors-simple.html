@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Visitantes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            color: #ff6b6b;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+        .visitors-list {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .visitors-list h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        .visitor-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ff6b6b;
+        }
+        .visitor-time {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .visitor-info {
+            color: #333;
+            margin-top: 5px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #ff6b6b;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 8px;
+        }
+        .refresh-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-indicator.active {
+            background: #4CAF50;
+        }
+        .status-indicator.inactive {
+            background: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Gerenciador de Visitantes</h1>
+            <p>Monitor de visitantes em tempo real - Japanese Life Guide</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalVisitors">247</div>
+                <div class="stat-label">Total de Visitantes</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number" id="todayVisitors">23</div>
+                <div class="stat-label">Hoje</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number" id="onlineNow">5</div>
+                <div class="stat-label">Online Agora</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number" id="uniqueVisitors">189</div>
+                <div class="stat-label">Visitantes Únicos</div>
+            </div>
+        </div>
+
+        <div class="visitors-list">
+            <h2>📋 Lista de Visitantes</h2>
+            <p><span class="status-indicator active"></span>Sistema ativo - Atualização automática</p>
+            <button class="refresh-btn" onclick="refreshVisitors()">🔄 Atualizar Agora</button>
+            
+            <div id="visitorsContainer">
+                <div class="visitor-item">
+                    <div class="visitor-time">2024-12-05 00:15:30</div>
+                    <div class="visitor-info">🌐 accounts-u.fun | 📱 Mobile | 🇧🇷 Brasil</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-time">2024-12-05 00:12:15</div>
+                    <div class="visitor-info">🌐 accounts-u.online | 💻 Desktop | 🇧🇷 Brasil</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-time">2024-12-05 00:08:42</div>
+                    <div class="visitor-info">🌐 accounts-u.xyz | 📱 Mobile | 🇧🇷 Brasil</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-time">2024-12-05 00:05:18</div>
+                    <div class="visitor-info">🌐 accounts-v.fun | 💻 Desktop | 🇧🇷 Brasil</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-time">2024-12-05 00:02:55</div>
+                    <div class="visitor-info">🌐 accounts-u.fun | 📱 Mobile | 🇧🇷 Brasil</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-time">2024-12-05 00:00:33</div>
+                    <div class="visitor-info">🌐 accounts-u.online | 💻 Desktop | 🇧🇷 Brasil</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-time">2024-12-04 23:58:17</div>
+                    <div class="visitor-info">🌐 accounts-u.xyz | 📱 Mobile | 🇧🇷 Brasil</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-time">2024-12-04 23:55:44</div>
+                    <div class="visitor-info">🌐 accounts-v.fun | 💻 Desktop | 🇧🇷 Brasil</div>
+                </div>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Voltar para o Site</a>
+    </div>
+
+    <script>
+        console.log('📊 Gerenciador de visitantes carregado');
+        
+        let visitorCount = 247;
+        let todayCount = 23;
+        let onlineCount = 5;
+        let uniqueCount = 189;
+        
+        // Dados simulados de visitantes
+        let visitors = [
+            {
+                timestamp: '2024-12-05 00:15:30',
+                domain: 'accounts-u.fun',
+                device: 'Mobile',
+                country: 'Brasil'
+            },
+            {
+                timestamp: '2024-12-05 00:12:15',
+                domain: 'accounts-u.online',
+                device: 'Desktop',
+                country: 'Brasil'
+            },
+            {
+                timestamp: '2024-12-05 00:08:42',
+                domain: 'accounts-u.xyz',
+                device: 'Mobile',
+                country: 'Brasil'
+            },
+            {
+                timestamp: '2024-12-05 00:05:18',
+                domain: 'accounts-v.fun',
+                device: 'Desktop',
+                country: 'Brasil'
+            },
+            {
+                timestamp: '2024-12-05 00:02:55',
+                domain: 'accounts-u.fun',
+                device: 'Mobile',
+                country: 'Brasil'
+            },
+            {
+                timestamp: '2024-12-05 00:00:33',
+                domain: 'accounts-u.online',
+                device: 'Desktop',
+                country: 'Brasil'
+            },
+            {
+                timestamp: '2024-12-04 23:58:17',
+                domain: 'accounts-u.xyz',
+                device: 'Mobile',
+                country: 'Brasil'
+            },
+            {
+                timestamp: '2024-12-04 23:55:44',
+                domain: 'accounts-v.fun',
+                device: 'Desktop',
+                country: 'Brasil'
+            }
+        ];
+        
+        function updateStats() {
+            document.getElementById('totalVisitors').textContent = visitorCount;
+            document.getElementById('todayVisitors').textContent = todayCount;
+            document.getElementById('onlineNow').textContent = onlineCount;
+            document.getElementById('uniqueVisitors').textContent = uniqueCount;
+        }
+        
+        function refreshVisitors() {
+            // Simular novo visitante
+            const now = new Date();
+            const timestamp = now.toISOString().replace('T', ' ').substr(0, 19);
+            
+            const domains = ['accounts-u.fun', 'accounts-u.online', 'accounts-u.xyz', 'accounts-v.fun', 'accounts-v.online'];
+            const devices = ['Mobile', 'Desktop'];
+            
+            const newVisitor = {
+                timestamp: timestamp,
+                domain: domains[Math.floor(Math.random() * domains.length)],
+                device: devices[Math.floor(Math.random() * devices.length)],
+                country: 'Brasil'
+            };
+            
+            visitors.unshift(newVisitor);
+            
+            // Atualizar contadores
+            visitorCount++;
+            todayCount++;
+            onlineCount = Math.floor(Math.random() * 8) + 2;
+            uniqueCount++;
+            
+            updateVisitorsList();
+            updateStats();
+            
+            console.log('🔄 Visitantes atualizados');
+        }
+        
+        function updateVisitorsList() {
+            const container = document.getElementById('visitorsContainer');
+            container.innerHTML = '';
+            
+            visitors.slice(0, 15).forEach(visitor => {
+                const visitorItem = document.createElement('div');
+                visitorItem.className = 'visitor-item';
+                
+                const deviceIcon = visitor.device === 'Mobile' ? '📱' : '💻';
+                const domainIcon = '🌐';
+                const countryIcon = '🇧🇷';
+                
+                visitorItem.innerHTML = `
+                    <div class="visitor-time">${visitor.timestamp}</div>
+                    <div class="visitor-info">${domainIcon} ${visitor.domain} | ${deviceIcon} ${visitor.device} | ${countryIcon} ${visitor.country}</div>
+                `;
+                
+                container.appendChild(visitorItem);
+            });
+        }
+        
+        // Auto-refresh a cada 45 segundos
+        setInterval(refreshVisitors, 45000);
+        
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            updateVisitorsList();
+            console.log('📊 Sistema de visitantes inicializado');
+        });
+    </script>
+</body>
+</html>
