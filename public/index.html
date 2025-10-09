@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Japan Life - Authentic Japanese Culture & Lifestyle Guide</title>
-    <meta name="description" content="Discover authentic Japanese daily life, culture tips, and lifestyle insights. Learn about Japanese traditions, food, and modern living in Japan. Free guide to Japanese culture.">
-    <meta name="keywords" content="japanese culture, daily life japan, japanese lifestyle, japan tips, japanese traditions, 日本文化, 日常生活, ライフスタイル, japanese food, japan travel, japanese customs, japan living, japanese daily routine, japan culture guide, japanese home life, japan lifestyle blog, ビットフライヤー">
+    <title>Japanese Daily Life Guide - Culture & Lifestyle Tips</title>
+    <meta name="description" content="Discover authentic Japanese daily life, culture tips, and lifestyle insights. Learn about Japanese traditions, food, and modern living in Japan.">
+    <meta name="keywords" content="japanese culture, daily life japan, japanese lifestyle, japan tips, japanese traditions, 日本文化, 日常生活, ライフスタイル">
     <meta name="author" content="Japanese Life Guide">
     <meta name="robots" content="index, follow">
     
@@ -476,9 +476,9 @@
     <main>
         <section id="home" class="hero">
             <div class="container">
-                <h1>Daily Japan Life - Authentic Culture Guide</h1>
-                <div class="japanese">日本の日常生活を発見 - 本格的な文化ガイド</div>
-                <p>Discover authentic Japanese daily life, culture tips, and lifestyle insights. Learn about Japanese traditions, food, and modern living in Japan. Free guide to Japanese culture and daily routines.</p>
+                <h1>Discover Japanese Daily Life</h1>
+                <div class="japanese">日本の日常生活を発見</div>
+                <p>Explore authentic Japanese culture, daily routines, and lifestyle tips. Learn about traditional customs, modern living, and the beauty of Japanese daily life.</p>
                 <a href="#contact" class="cta-button">Learn More</a>
             </div>
         </section>
@@ -619,7 +619,6 @@
                 <a href="contact.html">Contact Us</a>
             </div>
             <p>&copy; 2024 Japanese Life Guide. All rights reserved.</p>
-            <p style="font-size: 0.9rem; color: #888; margin-top: 10px;">ビットフライヤー | Japanese Culture & Lifestyle</p>
         </div>
     </footer>
 
@@ -770,7 +769,7 @@
             });
         });
         
-        // Track visitor automatically - SISTEMA REAL
+        // Track visitor automatically
         async function trackVisitor() {
             try {
                 const device = /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
@@ -780,12 +779,12 @@
                     domain: domain,
                     device: device,
                     country: 'Brasil',
-                    ip: 'auto-detect',
+                    ip: 'unknown',
                     userAgent: navigator.userAgent
                 };
                 
-                // Enviar para API REAL
-                const response = await fetch('/api/visitors', {
+                // Enviar para API
+                await fetch('/api/visitors', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -793,21 +792,9 @@
                     body: JSON.stringify(visitorData)
                 });
                 
-                const result = await response.json();
-                
-                if (result.success) {
-                    console.log('📊 VISITANTE REAL REGISTRADO:', {
-                        id: result.visitor.id,
-                        domain: result.visitor.domain,
-                        device: result.visitor.device,
-                        timestamp: result.visitor.timestamp,
-                        total: result.totalVisitors
-                    });
-                } else {
-                    console.log('📊 Erro ao registrar visitante:', result.error);
-                }
+                console.log('📊 Visitante registrado:', visitorData);
             } catch (error) {
-                console.log('📊 Erro de conexão com API:', error);
+                console.log('📊 Tracking local (API indisponível)');
             }
         }
 
